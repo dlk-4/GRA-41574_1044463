@@ -52,6 +52,9 @@ class PairsTradingPipeline:
 
     plot_spread_zscore_signals
         :Plot spread, z-score and trading signals.
+    
+    correlation
+        : Plot correlation matrix
     """
 
     def __init__(
@@ -856,9 +859,9 @@ class PairsTradingPipeline:
         plt.tight_layout()
         plt.show()
     
-    def covariance(self):
+    def correlation(self):
         """
-        Generate covariance matrix with 5 different assets.
+        Generate correlation matrix with 5 different assets.
         (Reproduces Figure 3)
         """
         assets = {
