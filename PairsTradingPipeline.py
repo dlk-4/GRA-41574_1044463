@@ -774,7 +774,7 @@ class PairsTradingPipeline:
         assets : list or None
             :If None, plot both name_x and name_y. Otherwise, plot the
             specified subset of columns in self.data.
-        (Reproduces Figure 1)
+        (Reproduces Figure 1,2)
         """
         if self.data is None:
             raise ValueError("No data available. Run download_data() and resample/build first.")
