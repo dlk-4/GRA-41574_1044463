@@ -859,62 +859,63 @@ class PairsTradingPipeline:
         plt.tight_layout()
         plt.show()
     
-    def correlation(self):
-        """
-        Generate correlation matrix with 5 different assets.
-        (Reproduces Figure 3)
-        """
-        assets = {
-            'IBIT': "Bitcoin ETF",
-            'MSTR': 'MicroStrategy',
-            '^GSPC': 'S&P 500',
-            'IVV': 'S&P 500 ETF'
-        }
 
-        data = yf.download(list(assets.keys()), start="2024-01-11", end="2025-10-28", progress=False)['Close']
-        data.rename(columns=assets, inplace=True)
+def correlation():
+    """
+    Generate correlation matrix with 5 different assets.
+    (Reproduces Figure 3)
+    """
+    assets = {
+        'IBIT': "Bitcoin ETF",
+        'MSTR': 'MicroStrategy',
+        '^GSPC': 'S&P 500',
+        'IVV': 'S&P 500 ETF'
+    }
 
-        btc = yf.download(
-            'BTC-USD',
-            interval='1h',
-            start='2024-01-11',
-            end='2025-10-28',
-            progress=False
-        )['Close']
+    data = yf.download(list(assets.keys()), start="2024-01-11", end="2025-10-28", progress=False)['Close']
+    data.rename(columns=assets, inplace=True)
 
-        # Convert to New York time (handles daylight saving)
-        btc_ny = btc.tz_convert('America/New_York')
+    btc = yf.download(
+        'BTC-USD',
+        interval='1h',
+        start='2024-01-11',
+        end='2025-10-28',
+        progress=False
+    )['Close']
 
-        # Keep only 4 PM ET closes
-        btc_4pm = btc_ny[btc_ny.index.hour == 16]
+    # Convert to New York time (handles daylight saving)
+    btc_ny = btc.tz_convert('America/New_York')
 
-        # Make it timezone-naive and align to business days
-        btc_4pm = btc_4pm.tz_localize(None)
-        btc_4pm.index = btc_4pm.index.normalize()
-        btc_4pm = btc_4pm.asfreq('B')
-        btc_4pm.name = 'Bitcoin'
+    # Keep only 4 PM ET closes
+    btc_4pm = btc_ny[btc_ny.index.hour == 16]
 
-        assets = {
-            'BTC-USD': "Bitcoin",
-            'IBIT': "Bitcoin ETF",
-            'MSTR': 'MicroStrategy',
-            '^GSPC': 'S&P 500',
-            'IVV': 'S&P 500 ETF'
-        }
+    # Make it timezone-naive and align to business days
+    btc_4pm = btc_4pm.tz_localize(None)
+    btc_4pm.index = btc_4pm.index.normalize()
+    btc_4pm = btc_4pm.asfreq('B')
+    btc_4pm.name = 'Bitcoin'
 
-        data = data.join(btc_4pm, how='inner')
+    assets = {
+        'BTC-USD': "Bitcoin",
+        'IBIT': "Bitcoin ETF",
+        'MSTR': 'MicroStrategy',
+        '^GSPC': 'S&P 500',
+        'IVV': 'S&P 500 ETF'
+    }
 
-        # Clean and name index
-        data.index.name = 'Date'
+    data = data.join(btc_4pm, how='inner')
 
-        data.rename(columns=assets, inplace=True)
+    # Clean and name index
+    data.index.name = 'Date'
 
-        returns = np.log(data / data.shift(1))
+    data.rename(columns=assets, inplace=True)
 
-        corr_matrix = returns.corr()
+    returns = np.log(data / data.shift(1))
 
-        plt.figure(figsize=(8,6))
-        sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
-        plt.title("Correlation Matrix of Daily Log Returns")
-        plt.show()
-            
+    corr_matrix = returns.corr()
+
+    plt.figure(figsize=(8,6))
+    sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
+    plt.title("Correlation Matrix of Daily Log Returns")
+    plt.show()
+        
