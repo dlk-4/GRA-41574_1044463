@@ -116,6 +116,7 @@ class PairsTradingPipeline:
         --------------------------
         New York session resampling for crypto + stock pairs.
         User must set crypto=True in constructor.
+        (Reproduces Figure 1)
         """
         if not self.crypto:
             raise ValueError("resample_crypto() called but crypto=False in constructor.")
@@ -421,6 +422,7 @@ class PairsTradingPipeline:
         self.y_train, self.y_test, self.ml_results,
         self.p_long_cutoff, self.p_short_cutoff, self.prob_results,
         self.prob_best.
+        (Reproduces Figure 7,8)
         """
         if getattr(self, "ml_df", None) is None:
             raise ValueError("ML dataset not found. Call build_ml_dataset() first.")
@@ -656,6 +658,7 @@ class PairsTradingPipeline:
         Side effects
         ------------
         Plots equity curves and stores metrics in self.eval_metrics.
+        (Reproduces Figure 9,10,11,12)
         """
         if self.model is None:
             raise ValueError("Model not trained. Call train_model() first.")
@@ -804,6 +807,7 @@ class PairsTradingPipeline:
         on aligned subplots.
 
         Requires build_spread_and_zscore() to be called beforehand.
+        (Reproduces Figure 4,5,6)
         """
         if getattr(self, "spread", None) is None or getattr(self, "zscore", None) is None:
             raise ValueError("Spread and z-score not found. Call build_spread_and_zscore() first.")
@@ -853,12 +857,15 @@ class PairsTradingPipeline:
         plt.show()
     
     def covariance(self):
+        """
+        Generate covariance matrix with 5 different assets.
+        (Reproduces Figure 3)
+        """
         assets = {
             'IBIT': "Bitcoin ETF",
-            '^IXIC': 'Nasdaq',
             'MSTR': 'MicroStrategy',
             '^GSPC': 'S&P 500',
-            'IVV': 'Nasdaq'
+            'IVV': 'S&P 500 ETF'
         }
 
         data = yf.download(list(assets.keys()), start="2024-01-11", end="2025-10-28", progress=False)['Close']
@@ -887,11 +894,9 @@ class PairsTradingPipeline:
         assets = {
             'BTC-USD': "Bitcoin",
             'IBIT': "Bitcoin ETF",
-            '^IXIC': 'Nasdaq',
             'MSTR': 'MicroStrategy',
-            'GC=F': 'Gold Futures',
-            'SI=F': 'Silver Futures',
-            'CL=F': 'Crude Oil',
+            '^GSPC': 'S&P 500',
+            'IVV': 'S&P 500 ETF'
         }
 
         data = data.join(btc_4pm, how='inner')
