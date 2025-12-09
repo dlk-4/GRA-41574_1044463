@@ -52,9 +52,6 @@ class PairsTradingPipeline:
 
     plot_spread_zscore_signals
         :Plot spread, z-score and trading signals.
-    
-    correlation
-        : Plot correlation matrix
     """
 
     def __init__(
